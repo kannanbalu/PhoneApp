@@ -1,0 +1,249 @@
+package course.examples.phoneapp;
+
+import android.app.Activity;
+import android.app.Notification;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.client2.session.AppKeyPair;
+
+import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by kannanb on 2/21/2016.
+ */
+public class OpsActivity extends Activity {
+    private ShakeListener shakeListener;
+
+    public static final String PHONE_CONTACTS = "contacts";
+    private ArrayList<String> phoneList = null;
+
+    private static final String APP_KEY = "i7vbawfpw6bd3vz";
+    private static final String APP_SECRET = "r5cyhemusf0glwu";
+    public static final String DROPBOX_NAME = "DropBox-Contact";
+    private static final String ACCESS_TOKEN = "AccessToken";
+    private static final String EMAIL_ADDRESS = "emailaddress";
+    private static final String SEND_EMAIL = "bsendmail";
+
+    private String accessToken = null;
+
+    public DropboxAPI<AndroidAuthSession> mDBApi = null;
+    private boolean bAuthenticated = false;
+    private SharedPreferences prefs = null;
+
+    private boolean bLoading = true;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.ops_layout);
+
+        final CheckBox sendMailCheckBox = (CheckBox)findViewById(R.id.checkBox);
+        final EditText mailText = (EditText)findViewById(R.id.editText);
+
+        prefs = getSharedPreferences(DROPBOX_NAME, 0);
+        String emailaddress = prefs.getString(EMAIL_ADDRESS, null);
+        mailText.setText(emailaddress, null);
+
+        RadioButton btn = (RadioButton)findViewById(R.id.radioButton);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(OpsActivity.this, "Upload all phone contacts on the device to dropbox account", Toast.LENGTH_LONG).show();
+            }
+        });
+        btn = (RadioButton)findViewById(R.id.radioButton2);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(OpsActivity.this, "Download all phone contacts saved in dropbox account to the device", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        Boolean sendMailEnabled = prefs.getBoolean(SEND_EMAIL, false);
+        sendMailCheckBox.setChecked(sendMailEnabled);
+        mailText.setEnabled(sendMailEnabled);
+
+        sendMailCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mailText.setEnabled(sendMailCheckBox.isChecked());
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putBoolean(SEND_EMAIL, sendMailCheckBox.isChecked());
+                edit.commit();
+            }
+        });
+
+        Button doItBtn = (Button)findViewById(R.id.button);
+        doItBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performOperation();
+            }
+        });
+
+        AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
+        AndroidAuthSession session = new AndroidAuthSession(appKeys);
+        mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+        prefs = getSharedPreferences(DROPBOX_NAME, 0);
+        accessToken = prefs.getString(ACCESS_TOKEN, null);
+
+        shakeListener = new ShakeListener(this);
+        shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
+            @Override
+            public void onShake() {
+                Toast.makeText(OpsActivity.this, "Please wait ...", Toast.LENGTH_SHORT).show();
+                performOperation();
+            }
+        });
+    }
+
+    public void retrievePhoneList() {
+        if (phoneList != null) return;
+        try {
+            Utility.UpdateList list = new Utility.UpdateList(this, phoneList);
+            phoneList = (ArrayList<String>)list.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void performOperation() {
+        bLoading = false;
+        RadioGroup group = (RadioGroup) findViewById(R.id.radioGroup);
+        final EditText mailText = (EditText)findViewById(R.id.editText);
+        int id = group.getCheckedRadioButtonId();
+        CheckBox sendMailCheckBox = (CheckBox)findViewById(R.id.checkBox);
+        if (sendMailCheckBox.isChecked()) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(EMAIL_ADDRESS, mailText.getText().toString());
+            editor.commit();
+        }
+        boolean bSendMail = sendMailCheckBox.isChecked();
+
+        if (id == R.id.radioButton) {  //Upload radio button
+            doDropboxAuthentication();
+            retrievePhoneList();
+            Utility.UploadFile uploadFile = new Utility.UploadFile(this, mDBApi, phoneList);
+            uploadFile.execute();
+            if (bSendMail) {
+                Utility.sendEmail("Contact uploaded to your Dropbox account", "Message: Contacts uploaded to dropbox!", "Contacts-Backup-Restore-App", mailText.getText().toString(), null, this);
+            }
+        } else if (id == R.id.radioButton2) { //Download radio button
+            /*int result = Utility.confirmDialog("Are you sure you want to import contacts from Dropbox?", "Warning!", this);
+            if (result != 0) {
+                Utility.showToast(this, "Yes pressed!");
+                return;
+            }
+            Utility.showToast(this, "No pressed!");*/
+
+            doDropboxAuthentication();
+            Utility.DownloadFile downloadFile = new Utility.DownloadFile(this, mDBApi);
+            downloadFile.execute();
+            if (bSendMail) {
+                Utility.sendEmail("Contacts downloaded from your Dropbox account", "Message: Contacts downloaded to your device from dropbox!", "Contacts-Backup-Restore-App", mailText.getText().toString(), null, this);
+            }
+        } else if (id == R.id.radioButton3) { //Show Contacts radio button
+            Utility.showToast(this, "Please wait...");
+            retrievePhoneList();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setClass(this, course.examples.phoneapp.MainActivity.class);
+            intent.putStringArrayListExtra("phoneList", phoneList);
+            startActivity(intent);
+        }
+    }
+
+    public void setToolTips() {
+        RadioButton uploadBtn = (RadioButton)findViewById(R.id.radioButton);
+        //uploadBtn.setT
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (bLoading) return;
+    }
+
+    public void doDropboxAuthentication() {
+        if (bAuthenticated) return;
+        try {
+            AndroidAuthSession session = mDBApi.getSession();
+            //mDBApi.getSession().startOAuth2Authentication(this);
+            if (accessToken != null) {
+                session.setOAuth2AccessToken(accessToken);
+            }
+            if (mDBApi.getSession().authenticationSuccessful()) {
+                mDBApi.getSession().finishAuthentication();
+                accessToken = mDBApi.getSession().getOAuth2AccessToken();
+                bAuthenticated = true;
+                //DropboxAPI.Account account = mDBApi.accountInfo();
+                //String email_address = account.email;
+                Toast.makeText(this, "Dropbox Authentication success: ", Toast.LENGTH_LONG).show();
+            } else {
+                mDBApi.getSession().startOAuth2Authentication(this);
+                mDBApi.getSession().finishAuthentication();
+                accessToken = mDBApi.getSession().getOAuth2AccessToken();
+                Utility.alert("Dropbox success: ", "", this);
+                bAuthenticated = true;
+            }
+            prefs = getSharedPreferences(DROPBOX_NAME, 0);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(ACCESS_TOKEN, accessToken);
+            editor.commit();
+        } catch (Exception e) {
+            //Utility.alert("Dropbox authentication failure: " + e.toString(), "Failure", this);
+            //Toast.makeText(this,"Dropbox authentication failure: " + e.toString(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            bAuthenticated = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem smsItem = (MenuItem)findViewById(R.id.action_sms);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        return super.onOptionsItemSelected(item);
+    }
+}

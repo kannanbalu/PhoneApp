@@ -1,0 +1,15 @@
+var searchData=
+[
+  ['onaccuracychanged',['onAccuracyChanged',['../classcourse_1_1examples_1_1phoneapp_1_1_shake_listener.html#a5adb466838aaee55687d30ec1d032dda',1,'course::examples::phoneapp::ShakeListener']]],
+  ['oncreate',['onCreate',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#a070a6d5a698190ad3ccd4029ef0de81c',1,'course.examples.phoneapp.MainActivity.onCreate()'],['../classcourse_1_1examples_1_1phoneapp_1_1_ops_activity.html#a124a97ed5678d96f0888b55db9e283bb',1,'course.examples.phoneapp.OpsActivity.onCreate()']]],
+  ['oncreatecontextmenu',['onCreateContextMenu',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#af3dc2bc280622bf4e9a9217b6c517c3d',1,'course.examples.phoneapp.MainActivity.onCreateContextMenu()'],['../classcourse_1_1examples_1_1phoneapp_1_1_ops_activity.html#a329fad70246e569c6746b7a38f35e6e6',1,'course.examples.phoneapp.OpsActivity.onCreateContextMenu()']]],
+  ['oncreateoptionsmenu',['onCreateOptionsMenu',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#a2c707af1c10b6bc00cd1381a5b194915',1,'course.examples.phoneapp.MainActivity.onCreateOptionsMenu()'],['../classcourse_1_1examples_1_1phoneapp_1_1_ops_activity.html#a1c9753b2bbe4cf6d37c17f3a97df304b',1,'course.examples.phoneapp.OpsActivity.onCreateOptionsMenu()']]],
+  ['onoptionsitemselected',['onOptionsItemSelected',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#ae80d1d5e00c746d7cb82860483b3ad0c',1,'course.examples.phoneapp.MainActivity.onOptionsItemSelected()'],['../classcourse_1_1examples_1_1phoneapp_1_1_ops_activity.html#a6175dfaf6290e9c3a13da40e5ef61e60',1,'course.examples.phoneapp.OpsActivity.onOptionsItemSelected()']]],
+  ['onpause',['onPause',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#adb371d3f3911466d2029203a484bc383',1,'course.examples.phoneapp.MainActivity.onPause()'],['../classcourse_1_1examples_1_1phoneapp_1_1_ops_activity.html#ae68d43a22b46dd1dea9f23b8f48589aa',1,'course.examples.phoneapp.OpsActivity.onPause()']]],
+  ['onresume',['onResume',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#ae4569b54396b85ca3b2970233bce7101',1,'course.examples.phoneapp.MainActivity.onResume()'],['../classcourse_1_1examples_1_1phoneapp_1_1_ops_activity.html#aeb8480322291f8d86c1afd370f4d46e9',1,'course.examples.phoneapp.OpsActivity.onResume()']]],
+  ['onsensorchanged',['onSensorChanged',['../classcourse_1_1examples_1_1phoneapp_1_1_shake_listener.html#a5faea5509575f61399e18873b33afbd0',1,'course::examples::phoneapp::ShakeListener']]],
+  ['onshake',['onShake',['../interfacecourse_1_1examples_1_1phoneapp_1_1_shake_listener_1_1_on_shake_listener.html#ad1e4228d1fc44312e48e59f272ba6c4e',1,'course::examples::phoneapp::ShakeListener::OnShakeListener']]],
+  ['onshakelistener',['OnShakeListener',['../interfacecourse_1_1examples_1_1phoneapp_1_1_shake_listener_1_1_on_shake_listener.html',1,'course::examples::phoneapp::ShakeListener']]],
+  ['opsactivity',['OpsActivity',['../classcourse_1_1examples_1_1phoneapp_1_1_ops_activity.html',1,'course::examples::phoneapp']]],
+  ['opsactivity_2ejava',['OpsActivity.java',['../_ops_activity_8java.html',1,'']]]
+];
