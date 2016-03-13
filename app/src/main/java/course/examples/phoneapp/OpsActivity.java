@@ -2,14 +2,17 @@ package course.examples.phoneapp;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -53,6 +56,7 @@ public class OpsActivity extends Activity {
     private SharedPreferences prefs = null;
 
     private boolean bLoading = true;
+    public static final String LOG_TAG_NAME = "OpsActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,14 @@ public class OpsActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mailText.setEnabled(sendMailCheckBox.isChecked());
+                if (sendMailCheckBox.isChecked()) {
+                    mailText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(mailText, InputMethodManager.SHOW_IMPLICIT);
+                } else {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mailText.getWindowToken(), 0);
+                }
                 SharedPreferences.Editor edit = prefs.edit();
                 edit.putBoolean(SEND_EMAIL, sendMailCheckBox.isChecked());
                 edit.commit();
@@ -99,6 +111,7 @@ public class OpsActivity extends Activity {
         doItBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(OpsActivity.this, "Please wait ...", Toast.LENGTH_SHORT).show();
                 performOperation();
             }
         });
@@ -143,10 +156,14 @@ public class OpsActivity extends Activity {
         boolean bSendMail = sendMailCheckBox.isChecked();
 
         if (id == R.id.radioButton) {  //Upload radio button
+            Log.i(LOG_TAG_NAME, "About to initiate dropbox authentication process");
             doDropboxAuthentication();
+            Log.i(LOG_TAG_NAME, "About to retrieve phone list");
             retrievePhoneList();
+            Log.i(LOG_TAG_NAME, "About to upload contacts to dropbox account");
             Utility.UploadFile uploadFile = new Utility.UploadFile(this, mDBApi, phoneList);
             uploadFile.execute();
+            Log.i(LOG_TAG_NAME, "Contacts uploaded successfully");
             if (bSendMail) {
                 Utility.sendEmail("Contact uploaded to your Dropbox account", "Message: Contacts uploaded to dropbox!", "Contacts-Backup-Restore-App", mailText.getText().toString(), null, this);
             }
@@ -182,6 +199,7 @@ public class OpsActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        shakeListener.resume();
         if (bLoading) return;
     }
 
@@ -191,18 +209,23 @@ public class OpsActivity extends Activity {
             AndroidAuthSession session = mDBApi.getSession();
             //mDBApi.getSession().startOAuth2Authentication(this);
             if (accessToken != null) {
+                Log.i(LOG_TAG_NAME, "setting OAuth2 token");
                 session.setOAuth2AccessToken(accessToken);
             }
             if (mDBApi.getSession().authenticationSuccessful()) {
+                Log.i(LOG_TAG_NAME, "Authentication successful");
                 mDBApi.getSession().finishAuthentication();
+                Log.i(LOG_TAG_NAME, "finished Authentication");
                 accessToken = mDBApi.getSession().getOAuth2AccessToken();
                 bAuthenticated = true;
                 //DropboxAPI.Account account = mDBApi.accountInfo();
                 //String email_address = account.email;
                 Toast.makeText(this, "Dropbox Authentication success: ", Toast.LENGTH_LONG).show();
             } else {
+                Log.i(LOG_TAG_NAME, "start OAuth2 Authentication");
                 mDBApi.getSession().startOAuth2Authentication(this);
                 mDBApi.getSession().finishAuthentication();
+                Log.i(LOG_TAG_NAME, "finished0 Authentication");
                 accessToken = mDBApi.getSession().getOAuth2AccessToken();
                 Utility.alert("Dropbox success: ", "", this);
                 bAuthenticated = true;
@@ -222,6 +245,7 @@ public class OpsActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        shakeListener.pause();
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.hardware.*;
@@ -45,13 +46,14 @@ public class MainActivity extends Activity  {
     private ListView lview = null;
     public static final String PHONE_CONTACTS = "contacts";
     public String phoneDetails = "";
-    public ShakeListener shakeListener = null;
     private List<String> phoneList = null;
+    public static final String LOG_TAG_NAME = "MainActivity";
 
-
+    public final static HashMap<Integer, String> phoneTypeMap = new HashMap<Integer, String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializePhoneTypes();
         setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
@@ -60,44 +62,73 @@ public class MainActivity extends Activity  {
         List <Map<String, String>> data = new ArrayList<Map<String, String>>();
         Map<String, String> item = new HashMap<String, String>();
 
+        int index;
+        String newString = "";
         for (String str : phoneList) {
+            newString = str;
             item = new HashMap<String, String>();
-            item.put(PHONE_CONTACTS, str);
+            index = Utility.nthIndexOf(str, Utility.DELIMITER, 2);
+            Log.i(LOG_TAG_NAME, "str " + str + " - 2nd token index: " + index);
+            if (index != -1) {
+                String phoneType = Utility.nthToken(str, Utility.DELIMITER, 3);
+                Log.i(LOG_TAG_NAME, "phoneType: " + phoneType);
+                try {
+                    phoneType = phoneTypeMap.get(Integer.valueOf(phoneType));
+                    Log.i(LOG_TAG_NAME, "phoneTypeStr: " + phoneType);
+                    newString = str.substring(0, index);
+                    newString = newString + Utility.DELIMITER + phoneType + Utility.DELIMITER;
+                    Log.i(LOG_TAG_NAME, "newString 0: " + newString);
+                    index = Utility.nthIndexOf(str, Utility.DELIMITER, 3);
+                    Log.i(LOG_TAG_NAME, "3rd token: " + index);
+                    if (index != -1) {
+                        newString = newString + str.substring(index + 1, str.length());
+                        Log.i(LOG_TAG_NAME, "Final new String: " + newString);
+                    }
+                } catch (Exception e) {
+                    Log.i(LOG_TAG_NAME, e.toString());
+                }
+            }
+            item.put(PHONE_CONTACTS, newString);
             data.add(item);
             phoneDetails = phoneDetails + str + "\n";
         }
         lview = (ListView) findViewById(R.id.ListView1);
         ListAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_1, new String[]{PHONE_CONTACTS}, new int[]{android.R.id.text1});
         lview.setAdapter(adapter);
+    }
 
-        /*lview = (ListView) findViewById(R.id.ListView1);
-        lview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object o = lview.getItemAtPosition(position);
-            }
-        });*/
-
-        shakeListener = new ShakeListener(this);
-        shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
-            @Override
-            public void onShake() {
-                Toast.makeText(MainActivity.this, "Mobile shaked!", Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void initializePhoneTypes() {
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM, "Custom");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT, "Assistant");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK, "Callback");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_CAR, "Car");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN, "Company_Main");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME, "Fax_Home");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK, "Fax_Work");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_HOME, "Home");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_ISDN, "ISDN");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_MAIN, "Main");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE, "Mobile");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_OTHER, "Other");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX, "Other_Fax");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_PAGER, "Pager");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_RADIO, "Radio");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_TELEX, "Telex");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE, "Work Mobile");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER, "Work Pager");
+        phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_WORK, "Work");
     }
 
    @Override
     protected void onResume() {
         super.onResume();
-        shakeListener.resume();
+
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        shakeListener.pause();
     }
 
     @Override

@@ -61,7 +61,7 @@ public class Utility {
     public static final String TEXT_MIME_TYPE = "text/plain";
     public static final String SMS_MIME_TYPE = "vnd.android-dir/mms-sms";
     public static final String WHATSAPP_PACKAGE_NAME = "com.whatsapp";
-    public static final String LOG_TAG_NAME = "Kannan";
+    public static final String LOG_TAG_NAME = "Utility";
     public static final String DELIMITER = ";";
     private static int result = 0;
 
@@ -619,6 +619,33 @@ public class Utility {
             }
         }
         return phoneList;
+    }
+
+    public static int nthIndexOf(final String string, final String token, final int index)
+    {
+        int j = 0;
+
+        for (int i = 0; i < index; i++)
+        {
+            j = string.indexOf(token, j + 1);
+            if (j == -1) break;
+        }
+
+        return j;
+    }
+
+    public static String nthToken(final String string, final String token, final int index)
+    {
+        String str = null;
+        if (index - 1 < 0) {
+            return str;
+        }
+        int startIndex = nthIndexOf(string, token, index-1);
+        int endIndex = nthIndexOf(string, token, index);
+        if (startIndex != -1 && endIndex != -1) {
+            str = string.substring(startIndex + 1, endIndex);
+        }
+        return str;
     }
 
     /*public static String getActivityDetails(ActivityManager activityManager) {
