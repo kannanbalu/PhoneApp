@@ -5,6 +5,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.hardware.SensorEventListener;
 import android.content.Context;
+import android.util.Log;
 
 /**
  * Created by kannanb on 10/1/2015.
@@ -27,6 +28,8 @@ public class ShakeListener implements SensorEventListener
     private long mLastShake;
     private long mLastForce;
 
+    public static final String LOG_TAG_NAME = "PhoneApp.ShakeListener";
+
     public interface OnShakeListener
     {
         public void onShake();
@@ -48,11 +51,13 @@ public class ShakeListener implements SensorEventListener
         if (mSensorMgr == null) {
             throw new UnsupportedOperationException("Sensors not supported");
         }
-        sensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        boolean supported = mSensorMgr.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
+        //sensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensor = mSensorMgr.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
+        Log.i(LOG_TAG_NAME, "Sensor returned : " + sensor);
+        boolean supported = mSensorMgr.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         if (!supported) {
             mSensorMgr.unregisterListener(this, sensor);
-            throw new UnsupportedOperationException("Accelerometer not supported");
+            //throw new UnsupportedOperationException("Accelerometer sensor cannot be registered");
         }
     }
 

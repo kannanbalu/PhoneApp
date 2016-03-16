@@ -61,7 +61,7 @@ public class Utility {
     public static final String TEXT_MIME_TYPE = "text/plain";
     public static final String SMS_MIME_TYPE = "vnd.android-dir/mms-sms";
     public static final String WHATSAPP_PACKAGE_NAME = "com.whatsapp";
-    public static final String LOG_TAG_NAME = "Utility";
+    public static final String LOG_TAG_NAME = "PhoneApp.Utility";
     public static final String DELIMITER = ";";
     private static int result = 0;
 

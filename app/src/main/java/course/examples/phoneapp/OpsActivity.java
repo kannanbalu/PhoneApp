@@ -56,7 +56,7 @@ public class OpsActivity extends Activity {
     private SharedPreferences prefs = null;
 
     private boolean bLoading = true;
-    public static final String LOG_TAG_NAME = "OpsActivity";
+    public static final String LOG_TAG_NAME = "PhoneApp.OpsActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
