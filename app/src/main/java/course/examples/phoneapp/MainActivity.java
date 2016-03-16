@@ -47,7 +47,7 @@ public class MainActivity extends Activity  {
     public static final String PHONE_CONTACTS = "contacts";
     public String phoneDetails = "";
     private List<String> phoneList = null;
-    public static final String LOG_TAG_NAME = "MainActivity";
+    public static final String LOG_TAG_NAME = "PhoneApp.MainActivity";
 
     public final static HashMap<Integer, String> phoneTypeMap = new HashMap<Integer, String>();
     @Override
