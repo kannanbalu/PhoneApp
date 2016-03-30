@@ -84,6 +84,13 @@ public class OpsActivity extends Activity {
                 Toast.makeText(OpsActivity.this, "Download all phone contacts saved in dropbox account to the device", Toast.LENGTH_LONG).show();
             }
         });
+        btn = (RadioButton)findViewById(R.id.radioButton3);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(OpsActivity.this, "Display all contacts residing on the device", Toast.LENGTH_LONG).show();
+            }
+        });
 
         Boolean sendMailEnabled = prefs.getBoolean(SEND_EMAIL, false);
         sendMailCheckBox.setChecked(sendMailEnabled);
@@ -133,7 +140,7 @@ public class OpsActivity extends Activity {
     }
 
     public void retrievePhoneList() {
-        if (phoneList != null) return;
+        //if (phoneList != null) return;  //We shouldn't cache the list as one can download new contacts or make modifications to the contacts through regular phone app
         try {
             Utility.UpdateList list = new Utility.UpdateList(this, phoneList);
             phoneList = (ArrayList<String>)list.execute().get();
@@ -160,6 +167,10 @@ public class OpsActivity extends Activity {
             doDropboxAuthentication();
             Log.i(LOG_TAG_NAME, "About to retrieve phone list");
             retrievePhoneList();
+            if (phoneList == null || phoneList.size() == 0) {
+                Utility.showToast(this, "No contacts available on the device for uploading...");
+                return;
+            }
             Log.i(LOG_TAG_NAME, "About to upload contacts to dropbox account");
             Utility.UploadFile uploadFile = new Utility.UploadFile(this, mDBApi, phoneList);
             uploadFile.execute();
@@ -184,6 +195,10 @@ public class OpsActivity extends Activity {
         } else if (id == R.id.radioButton3) { //Show Contacts radio button
             Utility.showToast(this, "Please wait...");
             retrievePhoneList();
+            if (phoneList == null || phoneList.size() == 0) {
+                Utility.showToast(this, "No contacts available on the device");
+                return;
+            }
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setClass(this, course.examples.phoneapp.MainActivity.class);
             intent.putStringArrayListExtra("phoneList", phoneList);

@@ -24,10 +24,13 @@ import java.util.List;
 import java.util.Map;
 
 import android.widget.ListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.Objects;
+
 import android.text.Html;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -95,6 +98,28 @@ public class MainActivity extends Activity  {
         lview = (ListView) findViewById(R.id.ListView1);
         ListAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_1, new String[]{PHONE_CONTACTS}, new int[]{android.R.id.text1});
         lview.setAdapter(adapter);
+        lview.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selItem = parent.getItemAtPosition(position).toString();
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+
+                int index = selItem.indexOf("{contacts=");
+                if (index != -1 ) {
+                    selItem = selItem.substring(index + 1);
+                }
+                int firstindex = selItem.indexOf(';');
+                if (firstindex != -1) {
+                    int secondindex = selItem.indexOf(';', firstindex+1);
+                    if (secondindex != -1) {
+                        selItem = selItem.substring(firstindex+1, secondindex);
+                        Log.i(LOG_TAG_NAME, selItem);
+                    }
+                }
+                intent.setData(Uri.parse("tel:" + selItem));
+                MainActivity.this.startActivity(intent);
+            }
+        });
     }
 
     private void initializePhoneTypes() {
@@ -122,8 +147,6 @@ public class MainActivity extends Activity  {
    @Override
     protected void onResume() {
         super.onResume();
-
-
     }
 
     @Override
