@@ -40,7 +40,7 @@ public class OpsActivity extends Activity {
     private ShakeListener shakeListener;
 
     public static final String PHONE_CONTACTS = "contacts";
-    private ArrayList<String> phoneList = null;
+    private ArrayList<String> phoneList = new ArrayList<>();
 
     private static final String APP_KEY = "i7vbawfpw6bd3vz";
     private static final String APP_SECRET = "r5cyhemusf0glwu";
@@ -118,7 +118,10 @@ public class OpsActivity extends Activity {
         doItBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(OpsActivity.this, "Please wait ...", Toast.LENGTH_SHORT).show();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm.isActive()) {
+                    imm.hideSoftInputFromWindow(mailText.getWindowToken(), 0);
+                }
                 performOperation();
             }
         });
@@ -133,7 +136,6 @@ public class OpsActivity extends Activity {
         shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
             @Override
             public void onShake() {
-                Toast.makeText(OpsActivity.this, "Please wait ...", Toast.LENGTH_SHORT).show();
                 performOperation();
             }
         });
@@ -143,7 +145,7 @@ public class OpsActivity extends Activity {
         //if (phoneList != null) return;  //We shouldn't cache the list as one can download new contacts or make modifications to the contacts through regular phone app
         try {
             Utility.UpdateList list = new Utility.UpdateList(this, phoneList);
-            phoneList = (ArrayList<String>)list.execute().get();
+            list.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -152,32 +154,15 @@ public class OpsActivity extends Activity {
     public void performOperation() {
         bLoading = false;
         RadioGroup group = (RadioGroup) findViewById(R.id.radioGroup);
-        final EditText mailText = (EditText)findViewById(R.id.editText);
         int id = group.getCheckedRadioButtonId();
-        CheckBox sendMailCheckBox = (CheckBox)findViewById(R.id.checkBox);
-        if (sendMailCheckBox.isChecked()) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(EMAIL_ADDRESS, mailText.getText().toString());
-            editor.commit();
-        }
-        boolean bSendMail = sendMailCheckBox.isChecked();
+        phoneList.clear();
 
         if (id == R.id.radioButton) {  //Upload radio button
             Log.i(LOG_TAG_NAME, "About to initiate dropbox authentication process");
             doDropboxAuthentication();
             Log.i(LOG_TAG_NAME, "About to retrieve phone list");
-            retrievePhoneList();
-            if (phoneList == null || phoneList.size() == 0) {
-                Utility.showToast(this, "No contacts available on the device for uploading...");
-                return;
-            }
-            Log.i(LOG_TAG_NAME, "About to upload contacts to dropbox account");
             Utility.UploadFile uploadFile = new Utility.UploadFile(this, mDBApi, phoneList);
             uploadFile.execute();
-            Log.i(LOG_TAG_NAME, "Contacts uploaded successfully");
-            if (bSendMail) {
-                Utility.sendEmail("Contact uploaded to your Dropbox account", "Message: Contacts uploaded to dropbox!", "Contacts-Backup-Restore-App", mailText.getText().toString(), null, this);
-            }
         } else if (id == R.id.radioButton2) { //Download radio button
             /*int result = Utility.confirmDialog("Are you sure you want to import contacts from Dropbox?", "Warning!", this);
             if (result != 0) {
@@ -189,12 +174,38 @@ public class OpsActivity extends Activity {
             doDropboxAuthentication();
             Utility.DownloadFile downloadFile = new Utility.DownloadFile(this, mDBApi);
             downloadFile.execute();
-            if (bSendMail) {
+        } else if (id == R.id.radioButton3) { //Show Contacts radio button
+            retrievePhoneList();
+        }
+    }
+
+    public void completeOperation() {
+        RadioGroup group = (RadioGroup) findViewById(R.id.radioGroup);
+        final EditText mailText = (EditText)findViewById(R.id.editText);
+        int id = group.getCheckedRadioButtonId();
+        CheckBox sendMailCheckBox = (CheckBox)findViewById(R.id.checkBox);
+        if (sendMailCheckBox.isChecked()) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(EMAIL_ADDRESS, mailText.getText().toString());
+            editor.commit();
+        }
+        boolean bSendMail = sendMailCheckBox.isChecked();
+        Log.i(LOG_TAG_NAME, "send mail: " + bSendMail  + " to: " + mailText);
+
+        if (id == R.id.radioButton) {
+            if (phoneList == null || phoneList.size() == 0) {
+                Utility.showToast(this, "No contacts available on the device for uploading...");
+                return;
+            }
+            Log.i(LOG_TAG_NAME, "Contacts uploaded successfully");
+            if (bSendMail && phoneList != null && phoneList.size() > 0) {
+                Utility.sendEmail("Contact uploaded to your Dropbox account", "Message: Contacts uploaded to dropbox!", "Contacts-Backup-Restore-App", mailText.getText().toString(), null, this);
+            }
+        } else if (id == R.id.radioButton2) {
+            if (bSendMail && phoneList != null && phoneList.size() > 0) {
                 Utility.sendEmail("Contacts downloaded from your Dropbox account", "Message: Contacts downloaded to your device from dropbox!", "Contacts-Backup-Restore-App", mailText.getText().toString(), null, this);
             }
         } else if (id == R.id.radioButton3) { //Show Contacts radio button
-            Utility.showToast(this, "Please wait...");
-            retrievePhoneList();
             if (phoneList == null || phoneList.size() == 0) {
                 Utility.showToast(this, "No contacts available on the device");
                 return;
@@ -235,14 +246,14 @@ public class OpsActivity extends Activity {
                 bAuthenticated = true;
                 //DropboxAPI.Account account = mDBApi.accountInfo();
                 //String email_address = account.email;
-                Toast.makeText(this, "Dropbox Authentication success: ", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "Dropbox Authentication success: ", Toast.LENGTH_LONG).show();
             } else {
                 Log.i(LOG_TAG_NAME, "start OAuth2 Authentication");
                 mDBApi.getSession().startOAuth2Authentication(this);
                 mDBApi.getSession().finishAuthentication();
                 Log.i(LOG_TAG_NAME, "finished0 Authentication");
                 accessToken = mDBApi.getSession().getOAuth2AccessToken();
-                Utility.alert("Dropbox success: ", "", this);
+                Toast.makeText(this, "Dropbox success: ", Toast.LENGTH_SHORT).show();
                 bAuthenticated = true;
             }
             prefs = getSharedPreferences(DROPBOX_NAME, 0);

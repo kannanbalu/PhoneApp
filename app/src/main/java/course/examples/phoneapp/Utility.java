@@ -64,24 +64,33 @@ public class Utility {
     public static final String LOG_TAG_NAME = "PhoneApp.Utility";
     public static final String DELIMITER = ";";
     private static int result = 0;
+    private final static String DROPBOX_APP_PATH = "Apps/MyPhoneContacts/contactList.txt";
 
     public static class UploadFile extends AsyncTask<Object, Object, Boolean> {
         private DropboxAPI dropboxApi;
-        private final String path = "Apps/MyPhoneContacts/contactList.txt";
+        private final String path = DROPBOX_APP_PATH;
         private Context context;
         private long filesize = 0;
         private List<String> listData = null;
         private ProgressDialog dialog = null;
         private String fileRevision = null;
+        private String dialogMessage = "";
 
         public UploadFile(Context context, DropboxAPI dropboxApi,
-                          List data) {
+                          List<String> data) {
             this.context = context.getApplicationContext();
             this.dropboxApi = dropboxApi;
             this.listData = data;
             dialog = new ProgressDialog(context);
-            dialog.setMessage("Upload in progress...");
+            dialogMessage = "Fetching phone records from the device...";
+            dialog.setMessage(dialogMessage);
             dialog.setTitle("Please Wait");
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
         }
 
         @Override
@@ -90,7 +99,15 @@ public class Utility {
             File tempFileToUploadToDropbox;
             FileWriter fileWriter = null;
             try {
+                getPhoneContactsEx(context, listData);
+                if (listData == null || listData.size() == 0) {
+                    dialogMessage = "There are no contacts existing on the device for uploading...";
+                    publishProgress();
+                    return false;
+                }
                 // Creating a temporal file.
+                dialogMessage = "Creating temporary file to upload to dropbox...";
+                publishProgress();
                 tempFileToUploadToDropbox = File.createTempFile("file", ".txt", tempDropboxDirectory);
                 fileWriter = new FileWriter(tempFileToUploadToDropbox);
                 for (String data : listData) {
@@ -98,12 +115,16 @@ public class Utility {
                 }
                 fileWriter.close();
                 filesize = tempFileToUploadToDropbox.length();
+                dialogMessage = "Uploading contacts to dropbox...";
+                publishProgress();
                 // Uploading the newly created file to Dropbox.
                 FileInputStream fileInputStream = new FileInputStream(tempFileToUploadToDropbox);
                 DropboxAPI.Entry entry = dropboxApi.putFile(path, fileInputStream,
                         tempFileToUploadToDropbox.length(), null, null);
                 fileRevision = entry.rev;
                 tempFileToUploadToDropbox.delete();
+                dialogMessage = "Uploading done...";
+                publishProgress();
                 SharedPreferences prefs = context.getSharedPreferences(OpsActivity.DROPBOX_NAME, 0);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("UPLOAD_VERSION", fileRevision);
@@ -114,13 +135,14 @@ public class Utility {
             } catch (DropboxException e) {
                 e.printStackTrace();
             }
+            dialogMessage = "An error occured while processing the upload request.";
             return false;
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog.show();
+        protected void onProgressUpdate(Object... value) {
+            super.onProgressUpdate(value);
+            dialog.setMessage(dialogMessage);
         }
 
         @Override
@@ -131,28 +153,37 @@ public class Utility {
                 Toast.makeText(context, "File " + path + " has been successfully uploaded!" +  " filesize = " + filesize + " . File revision no: " + fileRevision,
                         Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(context, "An error occured while processing the upload request.",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show();
+            }
+            if (context instanceof OpsActivity) {
+                ((OpsActivity)context).completeOperation();
             }
         }
     }
 
     public static class DownloadFile extends AsyncTask<Object, Object, Boolean> {
         private DropboxAPI dropboxApi;
-        private final String path = "Apps/MyPhoneContacts/contactList.txt";
+        private final String path = DROPBOX_APP_PATH;
         private Context context;
         private long filesize = 0;
-        private String errorMsg = null;
         private File file = null;
         private ProgressDialog dialog = null;
         private String fileRevision = null;
+        private String dialogMessage = "";
 
         public DownloadFile(Context context, DropboxAPI dropboxApi) {
             this.context = context; //.getApplicationContext();
             this.dropboxApi = dropboxApi;
             dialog = new ProgressDialog(context);
-            dialog.setMessage("Download in progress...");
+            dialogMessage = "Downloading contacts from dropbox...";
+            dialog.setMessage(dialogMessage);
             dialog.setTitle("Please Wait");
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
         }
 
         @Override
@@ -177,25 +208,37 @@ public class Utility {
                     showToast(context, "There is no newer version to be downloaded");
                 }
                 List<String> pList = readPhoneListFromFile(file);
+                if (pList == null || pList.size() == 0) {
+                    dialogMessage = "No contacts available on dropbox account.. Nothing to download...";
+                    publishProgress();
+                    return true;
+                }
+                dialogMessage = "Updating phone database on the device...";
+                publishProgress();
                 updatePhoneDB(pList, context);
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
-                errorMsg = e.getMessage() + e.toString();
+                //errorMsg = e.getMessage() + e.toString();
+                dialogMessage = "No contacts available on dropbox account for downloading...";
+                publishProgress();
+                Log.i(LOG_TAG_NAME, e.toString());
             } catch (DropboxException e) {
                 e.printStackTrace();
-                errorMsg = e.getMessage() + e.toString();
+                dialogMessage = "No contacts available on dropbox account for downloading...";
+                publishProgress();
+                Log.i(LOG_TAG_NAME, e.toString());
             }
             return false;
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog.show();
+        protected void onProgressUpdate(Object... value) {
+            super.onProgressUpdate(value);
+            dialog.setMessage(dialogMessage);
         }
 
-                @Override
+        @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             dialog.dismiss();
@@ -203,9 +246,11 @@ public class Utility {
                 Toast.makeText(context, "File " + path + " has been successfully downloaded!" +  " filesize = " + filesize + " to " + file + " . File revision no: " + fileRevision ,
                         Toast.LENGTH_LONG).show();
             } else {
-                //Toast.makeText(context, "An error occured while processing the download request.",
-                        //Toast.LENGTH_LONG).show();
-                Toast.makeText(context, errorMsg,Toast.LENGTH_LONG).show();}
+                Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show();
+            }
+            if (context instanceof OpsActivity) {
+                ((OpsActivity)context).completeOperation();
+            }
         }
     }
 
@@ -220,7 +265,7 @@ public class Utility {
             this.context = context; //.getApplicationContext();
             this.phoneList = list;
             dialog = new ProgressDialog(context);
-            dialog.setMessage("Fetching phone records...");
+            dialog.setMessage("Fetching phone records from the device...");
             dialog.setTitle("Please Wait");
         }
 
@@ -233,13 +278,16 @@ public class Utility {
 
         @Override
         protected List <String> doInBackground(Object... params) {
-            phoneList = getPhoneContactsEx(context);
+            getPhoneContactsEx(context, phoneList);
             return phoneList;
         }
 
         @Override
         protected void onPostExecute(List <String> result) {
             super.onPostExecute(result);
+            if (context instanceof OpsActivity) {
+                ((OpsActivity)context).completeOperation();
+            }
             dialog.dismiss();
         }
     }
@@ -281,6 +329,7 @@ public class Utility {
     public static void sendEmail(String subject, String msgBody, String from, String to, String cc, Context context) {
         try {
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setType("message/rfc822");
             emailIntent.setData(Uri.parse("mailto:"));
             emailIntent.setType(TEXT_MIME_TYPE);
             emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
@@ -289,6 +338,7 @@ public class Utility {
             if (cc != null) {
                 emailIntent.putExtra(Intent.EXTRA_CC, cc);
             }
+            Log.i(LOG_TAG_NAME, "sending mail to " + to + " ...");
             context.startActivity(emailIntent);
             //context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
         } catch (Exception e) {
@@ -359,9 +409,9 @@ public class Utility {
         return listData;
     }
 
-    public static List<String> getPhoneContactsEx(Context context) {
+    public static List<String> getPhoneContactsEx(Context context, List<String> phoneList) {
 
-        List<String> phoneList = new ArrayList<String>();
+        //List<String> phoneList = new ArrayList<String>();
         String phoneNumber = null;
         String email = null;
         String phoneType = null;
