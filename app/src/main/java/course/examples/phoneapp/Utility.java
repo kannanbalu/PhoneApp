@@ -223,6 +223,7 @@ public class Utility {
                 dialogMessage = "Updating phone database on the device...";
                 publishProgress();
                 updatePhoneDB(pList, context);
+                dialogMessage = "File " + path + " has been successfully downloaded!" +  " filesize = " + filesize + " to " + file + " . File revision no: " + fileRevision;
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -230,7 +231,6 @@ public class Utility {
                 dialogMessage = "No contacts available on dropbox account for downloading...";
                 publishProgress();
                 Log.i(LOG_TAG_NAME, e.toString());
-                dialogMessage = "File " + path + " has been successfully downloaded!" +  " filesize = " + filesize + " to " + file + " . File revision no: " + fileRevision;
             } catch (DropboxException e) {
                 e.printStackTrace();
                 dialogMessage = "No contacts available on dropbox account for downloading...";
@@ -250,11 +250,7 @@ public class Utility {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             dialog.dismiss();
-            if (result) {
-                Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show();
-            }
+            Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show();
             if (context instanceof OpsActivity) {
                 ((OpsActivity)context).completeOperation();
             }
