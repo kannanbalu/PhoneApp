@@ -64,11 +64,12 @@ public class Utility {
     public static final String LOG_TAG_NAME = "PhoneApp.Utility";
     public static final String DELIMITER = ";";
     private static int result = 0;
-    private final static String DROPBOX_APP_PATH = "Apps/MyPhoneContacts/contactList.txt";
+    private final static String DROPBOX_APP_PATH = "Apps/MyPhoneContacts/";
+    private final static String DROPBOX_APP_FILE = "Apps/MyPhoneContacts/contactList.txt";
 
     public static class UploadFile extends AsyncTask<Object, Object, Boolean> {
         private DropboxAPI dropboxApi;
-        private final String path = DROPBOX_APP_PATH;
+        private String path = DROPBOX_APP_FILE;
         private Context context;
         private long filesize = 0;
         private List<String> listData = null;
@@ -76,9 +77,9 @@ public class Utility {
         private String fileRevision = null;
         private String dialogMessage = "";
 
-        public UploadFile(Context context, DropboxAPI dropboxApi,
+        public UploadFile(Context ctxt, DropboxAPI dropboxApi,
                           List<String> data) {
-            this.context = context.getApplicationContext();
+            this.context = ctxt;
             this.dropboxApi = dropboxApi;
             this.listData = data;
             dialog = new ProgressDialog(context);
@@ -122,20 +123,23 @@ public class Utility {
                 DropboxAPI.Entry entry = dropboxApi.putFile(path, fileInputStream,
                         tempFileToUploadToDropbox.length(), null, null);
                 fileRevision = entry.rev;
+                Log.i(LOG_TAG_NAME, "file uploaded name: " + entry.fileName());
                 tempFileToUploadToDropbox.delete();
                 dialogMessage = "Uploading done...";
                 publishProgress();
-                SharedPreferences prefs = context.getSharedPreferences(OpsActivity.DROPBOX_NAME, 0);
+                SharedPreferences prefs = context.getSharedPreferences(Constants.DROPBOX_NAME, 0);
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("UPLOAD_VERSION", fileRevision);
+                editor.putString(Constants.UPLOAD_VERSION, fileRevision);
+                editor.putString(Constants.LAST_UPLOADED_FILE, entry.fileName());
                 editor.commit();
+                dialogMessage = "File " + entry.fileName() + " has been successfully uploaded!" +  " filesize = " + filesize + " . File revision no: " + fileRevision;
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (DropboxException e) {
                 e.printStackTrace();
             }
-            dialogMessage = "An error occured while processing the upload request.";
+            dialogMessage = "An error occured while processing the upload request, probably due to failed authentication. Please try again!";
             return false;
         }
 
@@ -150,8 +154,7 @@ public class Utility {
             super.onPostExecute(result);
             dialog.dismiss();
             if (result) {
-                Toast.makeText(context, "File " + path + " has been successfully uploaded!" +  " filesize = " + filesize + " . File revision no: " + fileRevision,
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show();
             }
@@ -163,7 +166,7 @@ public class Utility {
 
     public static class DownloadFile extends AsyncTask<Object, Object, Boolean> {
         private DropboxAPI dropboxApi;
-        private final String path = DROPBOX_APP_PATH;
+        private String path = DROPBOX_APP_FILE;
         private Context context;
         private long filesize = 0;
         private File file = null;
@@ -171,8 +174,8 @@ public class Utility {
         private String fileRevision = null;
         private String dialogMessage = "";
 
-        public DownloadFile(Context context, DropboxAPI dropboxApi) {
-            this.context = context; //.getApplicationContext();
+        public DownloadFile(Context ctxt, DropboxAPI dropboxApi) {
+            this.context = ctxt;
             this.dropboxApi = dropboxApi;
             dialog = new ProgressDialog(context);
             dialogMessage = "Downloading contacts from dropbox...";
@@ -190,6 +193,11 @@ public class Utility {
         protected Boolean doInBackground(Object... params) {
             final File tempDropboxDirectory = context.getCacheDir();
             try {
+                SharedPreferences prefs = context.getSharedPreferences(Constants.DROPBOX_NAME, 0);
+                String downloadFile = prefs.getString(Constants.LAST_UPLOADED_FILE, null);
+                if (downloadFile != null) {
+                    path = DROPBOX_APP_PATH + downloadFile;
+                }
                 file = new File(tempDropboxDirectory + "/contacts.txt");
                 FileOutputStream outputStream = new FileOutputStream(file);
                 DropboxAPI.DropboxFileInfo info = dropboxApi.getFile(path, null, outputStream, null);
@@ -199,13 +207,12 @@ public class Utility {
                 Log.i(LOG_TAG_NAME, "The file's rev is: " + info.getMetadata().rev);
                 Log.i(LOG_TAG_NAME, "The file's path is: " + file.getAbsolutePath());
                 Log.i(LOG_TAG_NAME, "The file size is : " + file.length());
-               // Toast.makeText(context, file.getAbsolutePath(),Toast.LENGTH_LONG).show();
-                SharedPreferences prefs = context.getSharedPreferences(OpsActivity.DROPBOX_NAME, 0);
-                String uploadrevision = prefs.getString("UPLOAD_VERSION", "");
+                Log.i(LOG_TAG_NAME, "The downloaded file name is : " + info.getMetadata().fileName());
+                String uploadrevision = prefs.getString(Constants.UPLOAD_VERSION, "");
                 if (! fileRevision.equals(uploadrevision)) {
                     showToast(context, "There is a newer version to be downloaded");
                 } else {
-                    showToast(context, "There is no newer version to be downloaded");
+                    //showToast(context, "There is no newer version to be downloaded");
                 }
                 List<String> pList = readPhoneListFromFile(file);
                 if (pList == null || pList.size() == 0) {
@@ -223,6 +230,7 @@ public class Utility {
                 dialogMessage = "No contacts available on dropbox account for downloading...";
                 publishProgress();
                 Log.i(LOG_TAG_NAME, e.toString());
+                dialogMessage = "File " + path + " has been successfully downloaded!" +  " filesize = " + filesize + " to " + file + " . File revision no: " + fileRevision;
             } catch (DropboxException e) {
                 e.printStackTrace();
                 dialogMessage = "No contacts available on dropbox account for downloading...";
@@ -243,8 +251,7 @@ public class Utility {
             super.onPostExecute(result);
             dialog.dismiss();
             if (result) {
-                Toast.makeText(context, "File " + path + " has been successfully downloaded!" +  " filesize = " + filesize + " to " + file + " . File revision no: " + fileRevision ,
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(context, dialogMessage, Toast.LENGTH_LONG).show();
             }

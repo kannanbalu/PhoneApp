@@ -44,8 +44,6 @@ public class OpsActivity extends Activity {
 
     private static final String APP_KEY = "i7vbawfpw6bd3vz";
     private static final String APP_SECRET = "r5cyhemusf0glwu";
-    public static final String DROPBOX_NAME = "DropBox-Contact";
-    private static final String ACCESS_TOKEN = "AccessToken";
     private static final String EMAIL_ADDRESS = "emailaddress";
     private static final String SEND_EMAIL = "bsendmail";
 
@@ -66,7 +64,7 @@ public class OpsActivity extends Activity {
         final CheckBox sendMailCheckBox = (CheckBox)findViewById(R.id.checkBox);
         final EditText mailText = (EditText)findViewById(R.id.editText);
 
-        prefs = getSharedPreferences(DROPBOX_NAME, 0);
+        prefs = getSharedPreferences(Constants.DROPBOX_NAME, 0);
         String emailaddress = prefs.getString(EMAIL_ADDRESS, null);
         mailText.setText(emailaddress, null);
 
@@ -129,8 +127,8 @@ public class OpsActivity extends Activity {
         AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
         AndroidAuthSession session = new AndroidAuthSession(appKeys);
         mDBApi = new DropboxAPI<AndroidAuthSession>(session);
-        prefs = getSharedPreferences(DROPBOX_NAME, 0);
-        accessToken = prefs.getString(ACCESS_TOKEN, null);
+        prefs = getSharedPreferences(Constants.DROPBOX_NAME, 0);
+        accessToken = prefs.getString(Constants.ACCESS_TOKEN, null);
 
         shakeListener = new ShakeListener(this);
         shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
@@ -192,7 +190,7 @@ public class OpsActivity extends Activity {
         boolean bSendMail = sendMailCheckBox.isChecked();
         Log.i(LOG_TAG_NAME, "send mail: " + bSendMail  + " to: " + mailText);
 
-        if (id == R.id.radioButton) {
+        if (id == R.id.radioButton) {  //upload radio button
             if (phoneList == null || phoneList.size() == 0) {
                 Utility.showToast(this, "No contacts available on the device for uploading...");
                 return;
@@ -201,7 +199,7 @@ public class OpsActivity extends Activity {
             if (bSendMail && phoneList != null && phoneList.size() > 0) {
                 Utility.sendEmail("Contact uploaded to your Dropbox account", "Message: Contacts uploaded to dropbox!", "Contacts-Backup-Restore-App", mailText.getText().toString(), null, this);
             }
-        } else if (id == R.id.radioButton2) {
+        } else if (id == R.id.radioButton2) { //download radio button
             if (bSendMail && phoneList != null && phoneList.size() > 0) {
                 Utility.sendEmail("Contacts downloaded from your Dropbox account", "Message: Contacts downloaded to your device from dropbox!", "Contacts-Backup-Restore-App", mailText.getText().toString(), null, this);
             }
@@ -256,9 +254,9 @@ public class OpsActivity extends Activity {
                 Toast.makeText(this, "Dropbox success: ", Toast.LENGTH_SHORT).show();
                 bAuthenticated = true;
             }
-            prefs = getSharedPreferences(DROPBOX_NAME, 0);
+            prefs = getSharedPreferences(Constants.DROPBOX_NAME, 0);
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(ACCESS_TOKEN, accessToken);
+            editor.putString(Constants.ACCESS_TOKEN, accessToken);
             editor.commit();
         } catch (Exception e) {
             //Utility.alert("Dropbox authentication failure: " + e.toString(), "Failure", this);
