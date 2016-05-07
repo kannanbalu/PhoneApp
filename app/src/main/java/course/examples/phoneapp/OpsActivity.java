@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Class containing the landing UI page of the application <br/>
  * Created by kannanb on 2/21/2016.
  */
 public class OpsActivity extends Activity {
@@ -56,6 +57,10 @@ public class OpsActivity extends Activity {
     private boolean bLoading = true;
     public static final String LOG_TAG_NAME = "PhoneApp.OpsActivity";
 
+    /**
+     * Initialize UI components
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,15 +135,20 @@ public class OpsActivity extends Activity {
         prefs = getSharedPreferences(Constants.DROPBOX_NAME, 0);
         accessToken = prefs.getString(Constants.ACCESS_TOKEN, null);
 
+        //Use ShakeListener to capture shake event on the device
         shakeListener = new ShakeListener(this);
         shakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
             @Override
             public void onShake() {
+                //Start the task chosen by the user on the UI, on the shake of a listener
                 performOperation();
             }
         });
     }
 
+    /**
+     * Method to retrieve phone contact details from the device. Uses Utility API to retreive phone records on a background thread
+     */
     public void retrievePhoneList() {
         //if (phoneList != null) return;  //We shouldn't cache the list as one can download new contacts or make modifications to the contacts through regular phone app
         try {
@@ -149,34 +159,39 @@ public class OpsActivity extends Activity {
         }
     }
 
+    /**
+     * Method to perform the task based on the option chosen by the user on the UI (upload, download, show contacts)
+     */
     public void performOperation() {
         bLoading = false;
         RadioGroup group = (RadioGroup) findViewById(R.id.radioGroup);
         int id = group.getCheckedRadioButtonId();
         phoneList.clear();
 
-        if (id == R.id.radioButton) {  //Upload radio button
+        if (id == R.id.radioButton) {  //Upload radio button is selected
             Log.i(LOG_TAG_NAME, "About to initiate dropbox authentication process");
+            //Authenticate user's account on dropbox
             doDropboxAuthentication();
             Log.i(LOG_TAG_NAME, "About to retrieve phone list");
+            //Use background thread to retrieve phone contacts from the device and upload it to drop box
             Utility.UploadFile uploadFile = new Utility.UploadFile(this, mDBApi, phoneList);
             uploadFile.execute();
-        } else if (id == R.id.radioButton2) { //Download radio button
-            /*int result = Utility.confirmDialog("Are you sure you want to import contacts from Dropbox?", "Warning!", this);
-            if (result != 0) {
-                Utility.showToast(this, "Yes pressed!");
-                return;
-            }
-            Utility.showToast(this, "No pressed!");*/
-
+        } else if (id == R.id.radioButton2) { //Download radio button is selected
+            //Authenticate user's account on dropbox
             doDropboxAuthentication();
+            //Use background thread to download phone contacts from dropbox and update the device's phone database
             Utility.DownloadFile downloadFile = new Utility.DownloadFile(this, mDBApi);
             downloadFile.execute();
-        } else if (id == R.id.radioButton3) { //Show Contacts radio button
+        } else if (id == R.id.radioButton3) { //Show Contacts radio button is selected
             retrievePhoneList();
         }
     }
 
+    /**
+     * Method to send a mail notification on the just completed task
+     * The method also displays a message on the chosen task operation alongwith any specific information on the task completed
+     *
+     */
     public void completeOperation() {
         RadioGroup group = (RadioGroup) findViewById(R.id.radioGroup);
         final EditText mailText = (EditText)findViewById(R.id.editText);
@@ -215,11 +230,9 @@ public class OpsActivity extends Activity {
         }
     }
 
-    public void setToolTips() {
-        RadioButton uploadBtn = (RadioButton)findViewById(R.id.radioButton);
-        //uploadBtn.setT
-    }
-
+    /**
+     * Resume shakeListener when the activity is resumed
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -227,6 +240,9 @@ public class OpsActivity extends Activity {
         if (bLoading) return;
     }
 
+    /**
+     * Method to perform authentication of user's account on the dropbox. This is done the first time an attempt is made to upload/download information from a dropbox
+     */
     public void doDropboxAuthentication() {
         if (bAuthenticated) return;
         try {
@@ -266,32 +282,12 @@ public class OpsActivity extends Activity {
         }
     }
 
+    /**
+     * Pause shakeListener when the activity is paused
+     */
     @Override
     protected void onPause() {
         super.onPause();
         shakeListener.pause();
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem smsItem = (MenuItem)findViewById(R.id.action_sms);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        return super.onOptionsItemSelected(item);
     }
 }

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.util.Log;
 
 /**
+ * Listener class to capture the shake gesture of a device and provide an event for performing any operation when triggered <br/>
  * Created by kannanb on 10/1/2015.
  */
 public class ShakeListener implements SensorEventListener
@@ -30,22 +31,39 @@ public class ShakeListener implements SensorEventListener
 
     public static final String LOG_TAG_NAME = "PhoneApp.ShakeListener";
 
+    /**
+     * Listener interface for listening to shake event of the device
+     */
     public interface OnShakeListener
     {
+        /**
+         * Shake event to be overriden for performing any desired operation on the shake of the device
+         */
         public void onShake();
     }
 
+    /**
+     * Constructor to prepare for initializing and absorbing shake event on the device
+     * @param context on which the shake event is consumed
+     */
     public ShakeListener(Context context)
     {
         mContext = context;
         resume();
     }
 
+    /**
+     * Method to set the user defined OnShakeListener
+     * @param listener interested in the shake event of the device
+     */
     public void setOnShakeListener(OnShakeListener listener)
     {
         mShakeListener = listener;
     }
 
+    /**
+     * Method to register the Accerlerometer Sensor to help sense the shake of the device
+     */
     public void resume() {
         mSensorMgr = (SensorManager)mContext.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorMgr == null) {
@@ -61,6 +79,9 @@ public class ShakeListener implements SensorEventListener
         }
     }
 
+    /**
+     * Method to unregister the sensor when the activity has been paused. This will save battery power
+     */
     public void pause() {
         if (mSensorMgr != null) {
             mSensorMgr.unregisterListener(this, sensor);
@@ -71,6 +92,10 @@ public class ShakeListener implements SensorEventListener
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) { }
 
+    /**
+     * Method to perform calculation on how to detect a shake of a device by the user
+     * @param event
+     */
     public void onSensorChanged(SensorEvent event)
     {
         float [] values = event.values;

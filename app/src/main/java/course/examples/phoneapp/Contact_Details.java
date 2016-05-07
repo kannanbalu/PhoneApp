@@ -1,6 +1,7 @@
 package course.examples.phoneapp;
 
 /**
+ * Data structure containing details of a person's contact information <br/>
  * Created by kannanb on 2/22/2016.
  */
 public class Contact_Details {

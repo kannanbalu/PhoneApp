@@ -1,6 +1,7 @@
 package course.examples.phoneapp;
 
 /**
+ * Interface containing constant strings used by other classes in the package <br/>
  * Created by kannanb on 4/1/2016.
  */
 public interface Constants {

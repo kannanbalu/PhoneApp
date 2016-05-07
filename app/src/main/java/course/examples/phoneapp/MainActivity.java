@@ -44,6 +44,9 @@ import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.AppKeyPair;
 
+/**
+ * Main activity class for launching the UI containing all phone contacts on the device
+ */
 public class MainActivity extends Activity  {
 
     private ListView lview = null;
@@ -53,6 +56,11 @@ public class MainActivity extends Activity  {
     public static final String LOG_TAG_NAME = "PhoneApp.MainActivity";
 
     public final static HashMap<Integer, String> phoneTypeMap = new HashMap<Integer, String>();
+
+    /**
+     * Initialize the UI component and the data structures defined in this class
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +68,7 @@ public class MainActivity extends Activity  {
         setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
+        //Get list of phone contacts on the device from the activity launching MainActivity
         phoneList = (List<String>)intent.getStringArrayListExtra("phoneList");
 
         List <Map<String, String>> data = new ArrayList<Map<String, String>>();
@@ -67,6 +76,7 @@ public class MainActivity extends Activity  {
 
         int index;
         String newString = "";
+        //Populate item data structure with all the phone details in a format containing fields separated by Utility.DELIMITER
         for (String str : phoneList) {
             newString = str;
             item = new HashMap<String, String>();
@@ -95,6 +105,7 @@ public class MainActivity extends Activity  {
             data.add(item);
             phoneDetails = phoneDetails + str + "\n";
         }
+        //Fill the list view with the phone details parsed above
         lview = (ListView) findViewById(R.id.ListView1);
         ListAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_1, new String[]{PHONE_CONTACTS}, new int[]{android.R.id.text1});
         lview.setAdapter(adapter);
@@ -122,6 +133,7 @@ public class MainActivity extends Activity  {
         });
     }
 
+    //Initialize phoneTypeMap with the various contacts a person can have on the phone device
     private void initializePhoneTypes() {
         phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM, "Custom");
         phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT, "Assistant");
@@ -142,44 +154,5 @@ public class MainActivity extends Activity  {
         phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE, "Work Mobile");
         phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER, "Work Pager");
         phoneTypeMap.put(ContactsContract.CommonDataKinds.Phone.TYPE_WORK, "Work");
-    }
-
-   @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem smsItem = (MenuItem)findViewById(R.id.action_sms);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.action_sms) {
-            Utility.sendSMS("9901001423", phoneDetails, "vnd.android-dir/mms-sms", this);
-        } else if (id == R.id.action_whatsapp) {
-            Utility.sendSMSWhatsApp("9901001423", phoneDetails, "text/plain", "com.whatsapp", this );
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
