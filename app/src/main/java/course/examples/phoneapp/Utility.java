@@ -54,6 +54,7 @@ import com.dropbox.client2.session.*;
 import com.dropbox.client2.android.*;
 
 /**
+ * Utility class providing stateless independent methods for performing operations on the frontend and backend <br/>
  * Created by kannanb on 9/29/2015.
  */
 public class Utility {
@@ -67,6 +68,10 @@ public class Utility {
     private final static String DROPBOX_APP_PATH = "Apps/MyPhoneContacts/";
     private final static String DROPBOX_APP_FILE = "Apps/MyPhoneContacts/contactList.txt";
 
+    /**
+     * Class for uploading a file from the application to a dropbox in a background (AsyncTask) thread
+     * The class will show the current state of the background tasks on the UI, keeping the user informed on the ongoing operations in the background
+     */
     public static class UploadFile extends AsyncTask<Object, Object, Boolean> {
         private DropboxAPI dropboxApi;
         private String path = DROPBOX_APP_FILE;
@@ -77,6 +82,12 @@ public class Utility {
         private String fileRevision = null;
         private String dialogMessage = "";
 
+        /**
+         * Constructor to initialize fields of this class
+         * @param ctxt  Context in which the upload file operation needs to be invoked
+         * @param dropboxApi instance of DropboxAPI
+         * @param data content that needs to be uploaded into the user's dropbox account
+         */
         public UploadFile(Context ctxt, DropboxAPI dropboxApi,
                           List<String> data) {
             this.context = ctxt;
@@ -88,12 +99,20 @@ public class Utility {
             dialog.setTitle("Please Wait");
         }
 
+        /**
+         * Method to launch a UI dialog to indicate start of the operation to the user
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             dialog.show();
         }
 
+        /**
+         * Method to retrieve phone contacts from the device and upload into dropbox, all in the background thread
+         * @param params  Additional parameter if any to be passed on to the AsyncTask
+         * @return true or false depending on the success/failure of the upload operation to be performed
+         */
         @Override
         protected Boolean doInBackground(Object... params) {
             final File tempDropboxDirectory = context.getCacheDir();
@@ -127,6 +146,7 @@ public class Utility {
                 tempFileToUploadToDropbox.delete();
                 dialogMessage = "Uploading done...";
                 publishProgress();
+                //Use SharedPreferences to save the currently uploaded file and its version on the local device storage
                 SharedPreferences prefs = context.getSharedPreferences(Constants.DROPBOX_NAME, 0);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(Constants.UPLOAD_VERSION, fileRevision);
@@ -143,12 +163,20 @@ public class Utility {
             return false;
         }
 
+        /**
+         * Method used to show the current state of the progress in a UI dialog to the user
+         * @param value
+         */
         @Override
         protected void onProgressUpdate(Object... value) {
             super.onProgressUpdate(value);
             dialog.setMessage(dialogMessage);
         }
 
+        /**
+         * Method to clean up the UI dialog and show the final result of the performed uploaded task to the user in a Tooltip
+         * @param result containing the success or failure of the task performed
+         */
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
@@ -164,6 +192,10 @@ public class Utility {
         }
     }
 
+    /**
+     * Class for downloading a file from the dropbox to the device in a background (AsyncTask) thread
+     * The class will show the current state of the background tasks on the UI, keeping the user informed on the ongoing operations in the background
+     */
     public static class DownloadFile extends AsyncTask<Object, Object, Boolean> {
         private DropboxAPI dropboxApi;
         private String path = DROPBOX_APP_FILE;
@@ -174,6 +206,11 @@ public class Utility {
         private String fileRevision = null;
         private String dialogMessage = "";
 
+        /**
+         * Constructor to initialize fields of this class
+         * @param ctxt  Context in which the download file operation needs to be invoked
+         * @param dropboxApi instance of DropboxAPI
+         */
         public DownloadFile(Context ctxt, DropboxAPI dropboxApi) {
             this.context = ctxt;
             this.dropboxApi = dropboxApi;
@@ -183,12 +220,20 @@ public class Utility {
             dialog.setTitle("Please Wait");
         }
 
+        /**
+         * Method to launch a UI dialog to indicate start of the operation to the user
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             dialog.show();
         }
 
+        /**
+         * Method to retrieve phone contacts from the user's dropbox account and update the phone database on the device, all in the background thread
+         * @param params  Additional parameter if any to be passed on to the AsyncTask
+         * @return true or false depending on the success/failure of the download operation to be performed
+         */
         @Override
         protected Boolean doInBackground(Object... params) {
             final File tempDropboxDirectory = context.getCacheDir();
@@ -240,12 +285,20 @@ public class Utility {
             return false;
         }
 
+        /**
+         * Method used to show the current state of the progress in a UI dialog to the user
+         * @param value
+         */
         @Override
         protected void onProgressUpdate(Object... value) {
             super.onProgressUpdate(value);
             dialog.setMessage(dialogMessage);
         }
 
+        /**
+         * Method to clean up the UI dialog and show the final result of the performed uploaded task to the user in a Tooltip
+         * @param result containing the success or failure of the task performed
+         */
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
@@ -257,6 +310,10 @@ public class Utility {
         }
     }
 
+    /**
+     * Class for retrieving phone contacts from the user's device in a background (AsyncTask) thread
+     * The class will show the current state of the background tasks on the UI, keeping the user informed on the ongoing operations in the background
+     */
     public static class UpdateList extends AsyncTask<Object, Object, List <String>> {
         private Context context;
         public static final String PHONE_CONTACTS = "contacts";
@@ -264,20 +321,33 @@ public class Utility {
         private List<String> phoneList = null;
         private ProgressDialog dialog = null;
 
+        /**
+         * Constructor to start preparing for retrieving the phone contacts in a background thread
+         * @param context Context in which the operation needs to be performed
+         * @param list that needs to be populated with the phone contacts on the device
+         */
         public UpdateList(Context context, List<String> list) {
-            this.context = context; //.getApplicationContext();
+            this.context = context;
             this.phoneList = list;
             dialog = new ProgressDialog(context);
             dialog.setMessage("Fetching phone records from the device...");
             dialog.setTitle("Please Wait");
         }
 
+        /**
+         * Method to launch a UI dialog to indicate start of the operation to the user
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             dialog.show();
        }
 
+        /**
+         * Method to retrieve phone contacts from the user's device, in the background thread
+         * @param params  Additional parameter if any to be passed on to the AsyncTask
+         * @return list of strings containing information on each person's contact on the user's device
+         */
 
         @Override
         protected List <String> doInBackground(Object... params) {
@@ -285,6 +355,10 @@ public class Utility {
             return phoneList;
         }
 
+        /**
+         * Method to clean up the UI dialog and give the caller of this class to perform any post task operation to be performed on the UI
+         * @param result containing the success or failure of the task performed
+         */
         @Override
         protected void onPostExecute(List <String> result) {
             super.onPostExecute(result);
@@ -295,10 +369,16 @@ public class Utility {
         }
     }
 
+    /**
+     * Wrapper Method to display a tool tip message to the user in a UI method
+     * @param context Activity where the tooltip (Toast) needs to be displayed
+     * @param message Message to be displayed on the UI
+     */
     public static void showToast(Context context, String message) {
         if (! (context instanceof Activity) ) return;
         final Activity activity = (Activity)context;
         final String msg = message;
+        //Always display message on the UI thread
         activity.runOnUiThread(new Runnable() {
             public void run() {
                 Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
@@ -306,6 +386,13 @@ public class Utility {
         });
     }
 
+    /**
+     * Method to start an activity for sending SMS to the given phone number and the given message
+     * @param phoneNumber number to which the SMS needs to be sent
+     * @param msgBody message to be SMS'ed
+     * @param mimeType type of message
+     * @param context Context in which the activity needs to be started
+     */
     public static void sendSMS(String phoneNumber, String msgBody, String mimeType, Context context) {
         Intent msgIntent = new Intent(Intent.ACTION_VIEW);
         msgIntent.setType(SMS_MIME_TYPE);
@@ -314,6 +401,13 @@ public class Utility {
         context.startActivity(msgIntent);
     }
 
+    /**
+     * Method to start an activity for sending a whatsapp message to the given phone number and the given message
+     * @param phoneNumber number to which the whatsapp message needs to be sent
+     * @param msgBody message to be sent on whatsapp
+     * @param mimeType type of message
+     * @param context Context in which the activity needs to be started
+     */
     public static void sendSMSWhatsApp(String phoneNumber, String msgBody, String mimeType, String packageName, Context context) {
         try {
             Uri uri = Uri.parse("smsto:" + phoneNumber);
@@ -350,6 +444,11 @@ public class Utility {
         }
     }
 
+    /**
+     * Method to start an activity for making a phone call
+     * @param phoneNumber contact number of the person to be called
+     * @param context Context from which the intent activity is invoked
+     */
     public static void phoneCall(String phoneNumber, Context context) {
         try {
             Intent phoneIntent = new Intent(Intent.ACTION_CALL);
@@ -361,6 +460,12 @@ public class Utility {
         }
     }
 
+    /**
+     * Method to display a UI alert dialog to the user
+     * @param msgBody Message content to be displayed to the user
+     * @param title Title of the message
+     * @param context Context in which the dialog is launched
+     */
     public static void alert(String msgBody, String title, Context context) {
         AlertDialog.Builder dlg = new AlertDialog.Builder(context);
         dlg.setMessage(msgBody);
@@ -368,6 +473,13 @@ public class Utility {
         dlg.show();
     }
 
+    /**
+     * Method to display a UI dialog to the user requiring a confirmation from the user
+     * @param msgBody Message content to be displayed to the user
+     * @param title Title of the message
+     * @param context Context in which the dialog is launched
+     * @return an int containing the option (yes / no) chosen by the user
+     */
     public static int confirmDialog(String msgBody, String title, Context context) {
         AlertDialog.Builder dlg = new AlertDialog.Builder(context);
         dlg.setMessage(msgBody);
@@ -390,6 +502,11 @@ public class Utility {
         return result;
     }
 
+    /**
+     * Method to return a list of phone contacts from a given file
+     * @param file containing detailed list of phone contacts
+     * @return a list containing phone contact of each person per item
+     */
     public static List<String> readPhoneListFromFile(File file) {
         List<String> listData = new ArrayList<String>();
         Log.i(LOG_TAG_NAME, "File read from cache " + file);
@@ -412,6 +529,12 @@ public class Utility {
         return listData;
     }
 
+    /**
+     * Method to retrieve contacts on the phone device using ContentResolver and the relevant Contacts provider
+     * @param context Context for retrieving the content resolver
+     * @param phoneList List to be populated with the retrieved phone contact list
+     * @return a list containing the populated contact information of each person on the user's device
+     */
     public static List<String> getPhoneContactsEx(Context context, List<String> phoneList) {
 
         //List<String> phoneList = new ArrayList<String>();
@@ -495,6 +618,11 @@ public class Utility {
         return phoneList;
     }
 
+    /**
+     * Method to update the contact database on user's device with the list of phone contacts provided
+     * @param list containing list of phone contacts to be updated into the user's contact database
+     * @param context Context using which the update of the contact database needs to be performed
+     */
     public static void updatePhoneDB(List<String> list, Context context) {
         if (list == null || list.size() == 0) {
             showToast(context, "There are no contacts to update !");
@@ -601,6 +729,11 @@ public class Utility {
         }
     }
 
+    /**
+     * Method to retreive a list of phone contacts on the user's device
+     * @param c Context in which the operation needs to be performed
+     * @return a list containing basic contact information of each person on the device
+     */
     public static List<String> getPhoneContacts(Context c) {
         // Note this method would work only if you have the right uses-permission (android.permission.READ_CONTACTS) in AndroidManifest.xml
         List<String> phoneList = new ArrayList<String>();
@@ -624,6 +757,12 @@ public class Utility {
         phones.close();
         return phoneList;
     }
+
+    /**
+     * Method to retreive a list of phone contacts on the user's device
+     * @param c Context in which the operation needs to be performed
+     * @return a list containing detailed contact information of each person on the device
+     */
     public static List<String> getDetailedPhoneContacts(Context c) {
         List<String> phoneList = new ArrayList<String>();
         ContentResolver cr = c.getContentResolver();
@@ -674,6 +813,13 @@ public class Utility {
         return phoneList;
     }
 
+    /**
+     * Wrapper Method to retrieve the index in a string for a given token
+     * @param string source String to be searched through
+     * @param token containing the token to be looked for
+     * @param index position from which the search needs to be performed
+     * @return an index containing the portion of the source string to be returned
+     */
     public static int nthIndexOf(final String string, final String token, final int index)
     {
         int j = 0;
@@ -687,6 +833,13 @@ public class Utility {
         return j;
     }
 
+    /**
+     * Wrapper Method to retrieve the nth portion of a string with a given token
+     * @param string source String to be searched through
+     * @param token containing the token to be looked for
+     * @param index position from which the search needs to be performed
+     * @return a string containing the portion of the source string to be returned
+     */
     public static String nthToken(final String string, final String token, final int index)
     {
         String str = null;
@@ -700,143 +853,4 @@ public class Utility {
         }
         return str;
     }
-
-    /*public static String getActivityDetails(ActivityManager activityManager) {
-        //activityManager = (ActivityManager)c.getSystemService(Context.ACTIVITY_SERVICE);
-        if (activityManager == null) {
-            return "Activity manager not found!";
-        }
-
-        List<ActivityManager.AppTask> tasks = activityManager.getAppTasks();
-        if (tasks == null || tasks.isEmpty()) {
-            return "No tasks found!";
-        }
-        StringBuffer aDetails = new StringBuffer();
-        for (ActivityManager.AppTask task : tasks) {
-            ActivityManager.RecentTaskInfo tInfo = task.getTaskInfo();
-            aDetails.append(tInfo.id + " : " + tInfo.description + " : " + tInfo.taskDescription.toString() + " \n");
-        }
-        return aDetails.toString();
-    }*/
-
-    /* public static String getPowerDetails(Context c) {
-        PowerManager powerManager = (PowerManager)c.getSystemService(Context.POWER_SERVICE);
-        StringBuffer powerDetails = new StringBuffer("Interactive mode : " + powerManager.isInteractive() + "Power Save Mode: " + powerManager.isPowerSaveMode() + "\n");
-        boolean flag = powerManager.isWakeLockLevelSupported(PowerManager.PARTIAL_WAKE_LOCK);
-        powerDetails.append("PARTIAL WAKE LOCK: " + flag + "\n");
-        flag = powerManager.isWakeLockLevelSupported(PowerManager.ON_AFTER_RELEASE);
-        powerDetails.append("PARTIAL WAKE LOCK: " + flag + "\n");
-        flag = powerManager.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK);
-        powerDetails.append("PROXIMITY SCREEN OFF WAKE LOCK: " + flag + "\n");
-        flag = powerManager.isWakeLockLevelSupported(PowerManager.ACQUIRE_CAUSES_WAKEUP);
-        powerDetails.append("ACQUIRE CAUSES WAKEUP: " + flag + "\n");
-        return powerDetails.toString();
-    }*/
-
-    /* public static String getBatteryDetails(Context c) {
-        BatteryManager batteryManager = (BatteryManager)c.getSystemService(Context.BATTERY_SERVICE);
-        StringBuffer batteryDetails = new StringBuffer();
-        int propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_HEALTH_COLD);
-        batteryDetails.append("BATTERY_HEALTH_COLD: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_HEALTH_GOOD);
-        batteryDetails.append("BATTERY_HEALTH_GOOD: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_HEALTH_DEAD);
-        batteryDetails.append("BATTERY_HEALTH_DEAD: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE);
-        batteryDetails.append("BATTERY_HEALTH_OVER_VOLTAGE: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_HEALTH_OVERHEAT);
-        batteryDetails.append("BATTERY_HEALTH_OVERHEAT: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_HEALTH_UNKNOWN);
-        batteryDetails.append("BATTERY_HEALTH_UNKNOWN: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE);
-        batteryDetails.append("BATTERY_HEALTH_UNSPECIFIED_FAILURE: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_PLUGGED_AC);
-        batteryDetails.append("BATTERY_PLUGGED_AC: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_PLUGGED_USB);
-        batteryDetails.append("BATTERY_PLUGGED_USB: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_PLUGGED_WIRELESS);
-        batteryDetails.append("BATTERY_PLUGGED_WIRELESS: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-        batteryDetails.append("BATTERY_PROPERTY_CAPACITY: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
-        batteryDetails.append("BATTERY_PROPERTY_CHARGE_COUNTER: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE);
-        batteryDetails.append("BATTERY_PROPERTY_CURRENT_AVERAGE: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
-        batteryDetails.append("BATTERY_PROPERTY_CURRENT_NOW: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
-        batteryDetails.append("BATTERY_PROPERTY_ENERGY_COUNTER: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_STATUS_CHARGING);
-        batteryDetails.append("BATTERY_STATUS_CHARGING: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_STATUS_DISCHARGING);
-        batteryDetails.append("BATTERY_STATUS_DISCHARGING: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_STATUS_FULL);
-        batteryDetails.append("BATTERY_STATUS_FULL: " + propertyValue + "\n");
-        propertyValue = batteryManager.getIntProperty(BatteryManager.BATTERY_STATUS_NOT_CHARGING);
-        batteryDetails.append("BATTERY_STATUS_NOT_CHARGING: " + propertyValue + "\n");
-        return batteryDetails.toString();
-    } */
-
-  /*  public static String getWifiDetails(Context c) {
-        WifiManager wifiManager = (WifiManager)c.getSystemService(Context.WIFI_SERVICE);
-        StringBuffer wifiDetails = new StringBuffer();
-
-        int wifiState = wifiManager.getWifiState();
-        switch (wifiState) {
-            case WifiManager.WIFI_STATE_DISABLED :
-                    wifiDetails.append("Wifi State: " + "DISABLED" + "\n");
-                    break;
-            case WifiManager.WIFI_STATE_DISABLING :
-                wifiDetails.append("Wifi State: " + "DISABLING" + "\n");
-                break;
-            case WifiManager.WIFI_STATE_ENABLED:
-                wifiDetails.append("Wifi State: " + "ENABLED" + "\n");
-                break;
-            case WifiManager.WIFI_STATE_ENABLING :
-                wifiDetails.append("Wifi State: " + "ENABLING" + "\n");
-                break;
-            case WifiManager.WIFI_STATE_UNKNOWN :
-                wifiDetails.append("Wifi State: " + "UNKNOWN" + "\n");
-                break;
-        }
-
-        boolean flag = wifiManager.is5GHzBandSupported();
-        wifiDetails.append("5GHzBandSupported: " + flag + "\n");
-        flag = wifiManager.isDeviceToApRttSupported();
-        wifiDetails.append("DeviceToApRttSupported: " + flag + "\n");
-        flag = wifiManager.isEnhancedPowerReportingSupported();
-        wifiDetails.append("EnhancedPowerReportingSupported: " + flag + "\n");
-        flag = wifiManager.isP2pSupported();
-        wifiDetails.append("P2pSupported: " + flag + "\n");
-        flag = wifiManager.isPreferredNetworkOffloadSupported();
-        wifiDetails.append("PreferredNetworkOffloadSupported: " + flag + "\n");
-        flag = wifiManager.isScanAlwaysAvailable();
-        wifiDetails.append("ScanAlwaysAvailable: " + flag + "\n");
-        flag = wifiManager.isTdlsSupported();
-        wifiDetails.append("TdlsSupported: " + flag + "\n");
-        flag = wifiManager.isWifiEnabled();
-        wifiDetails.append("WifiEnabled: " + flag + "\n");
-
-        wifiDetails.append("DhcpInfo: " + wifiManager.getDhcpInfo().toString() + "\n");
-
-        List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();
-        int i = 1;
-        for (WifiConfiguration config : configs) {
-            wifiDetails.append("Network config " + i + " " + config.toString());
-            i++;
-        }
-
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        wifiDetails.append("BSSID: " + wifiInfo.getBSSID() + "\n");
-        wifiDetails.append("Hidden SSID: " + wifiInfo.getHiddenSSID() + "\n");
-        wifiDetails.append("Frequency: " + wifiInfo.getFrequency());
-        wifiDetails.append("IP Address: " + wifiInfo.getIpAddress());
-        wifiDetails.append("Network ID: " + wifiInfo.getNetworkId());
-        wifiDetails.append("Link Speed: " + wifiInfo.getLinkSpeed());
-        wifiDetails.append("Mac Address: " + wifiInfo.getMacAddress());
-        wifiDetails.append("SSID: " + wifiInfo.getSSID());
-        wifiDetails.append("Rssi : " + wifiInfo.getRssi());
-
-        return wifiDetails.toString();
-    }*/
 }
