@@ -40,10 +40,16 @@ void \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a5adb4668
 \item 
 void \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a5faea5509575f61399e18873b33afbd0}{on\+Sensor\+Changed} (Sensor\+Event event)
 \end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static final String \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a6ed24cf98223b33bfa637cf67c801914}{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E} = \char`\"{}Phone\+App.\+Shake\+Listener\char`\"{}
+\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Created by kannanb on 10/1/2015. 
+Listener class to capture the shake gesture of a device and provide an event for performing any operation when triggered ~\newline
+ Created by kannanb on 10/1/2015. 
 
 \subsection{Constructor \& Destructor Documentation}
 \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a1ab0dfd3a0312f22d80553fc86517ef4}{}\index{course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}!Shake\+Listener@{Shake\+Listener}}
@@ -53,6 +59,11 @@ Created by kannanb on 10/1/2015.
 \item[{Context}]{context}
 \end{DoxyParamCaption}
 )}\label{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a1ab0dfd3a0312f22d80553fc86517ef4}
+Constructor to prepare for initializing and absorbing shake event on the device 
+\begin{DoxyParams}{Parameters}
+{\em context} & on which the shake event is consumed \\
+\hline
+\end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
@@ -71,6 +82,11 @@ Created by kannanb on 10/1/2015.
 \item[{Sensor\+Event}]{event}
 \end{DoxyParamCaption}
 )}\label{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a5faea5509575f61399e18873b33afbd0}
+Method to perform calculation on how to detect a shake of a device by the user 
+\begin{DoxyParams}{Parameters}
+{\em event} & \\
+\hline
+\end{DoxyParams}
 \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a5214588f55677bad1967cde68353b7ef}{}\index{course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}!pause@{pause}}
 \index{pause@{pause}!course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}}
 \subsubsection[{pause()}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Shake\+Listener.\+pause (
@@ -78,20 +94,31 @@ Created by kannanb on 10/1/2015.
 {}
 \end{DoxyParamCaption}
 )}\label{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a5214588f55677bad1967cde68353b7ef}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a53d8ca8e5fda8c6b6e6fe9659d5badc9}{}\index{course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}!resume@{resume}}
+Method to unregister the sensor when the activity has been paused. This will save battery power \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a53d8ca8e5fda8c6b6e6fe9659d5badc9}{}\index{course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}!resume@{resume}}
 \index{resume@{resume}!course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}}
 \subsubsection[{resume()}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Shake\+Listener.\+resume (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
 )}\label{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a53d8ca8e5fda8c6b6e6fe9659d5badc9}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a55bc555dadb88dcb1f51b8e5e0c952cc}{}\index{course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}!set\+On\+Shake\+Listener@{set\+On\+Shake\+Listener}}
+Method to register the Accerlerometer Sensor to help sense the shake of the device \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a55bc555dadb88dcb1f51b8e5e0c952cc}{}\index{course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}!set\+On\+Shake\+Listener@{set\+On\+Shake\+Listener}}
 \index{set\+On\+Shake\+Listener@{set\+On\+Shake\+Listener}!course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}}
 \subsubsection[{set\+On\+Shake\+Listener(\+On\+Shake\+Listener listener)}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Shake\+Listener.\+set\+On\+Shake\+Listener (
 \begin{DoxyParamCaption}
 \item[{{\bf On\+Shake\+Listener}}]{listener}
 \end{DoxyParamCaption}
 )}\label{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a55bc555dadb88dcb1f51b8e5e0c952cc}
+Method to set the user defined \hyperlink{interfacecourse_1_1examples_1_1phoneapp_1_1_shake_listener_1_1_on_shake_listener}{On\+Shake\+Listener} 
+\begin{DoxyParams}{Parameters}
+{\em listener} & interested in the shake event of the device \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a6ed24cf98223b33bfa637cf67c801914}{}\index{course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}!L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E@{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E}}
+\index{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E@{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E}!course\+::examples\+::phoneapp\+::\+Shake\+Listener@{course\+::examples\+::phoneapp\+::\+Shake\+Listener}}
+\subsubsection[{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E}]{\setlength{\rightskip}{0pt plus 5cm}final String course.\+examples.\+phoneapp.\+Shake\+Listener.\+L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E = \char`\"{}Phone\+App.\+Shake\+Listener\char`\"{}\hspace{0.3cm}{\ttfamily [static]}}\label{classcourse_1_1examples_1_1phoneapp_1_1_shake_listener_a6ed24cf98223b33bfa637cf67c801914}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

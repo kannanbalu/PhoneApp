@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['shakelistener',['shakeListener',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#a7e9ef0d32b848b4c425981d38bef06fd',1,'course::examples::phoneapp::MainActivity']]],
-  ['sms_5fmime_5ftype',['SMS_MIME_TYPE',['../classcourse_1_1examples_1_1phoneapp_1_1_utility.html#a6b677db05046c2fcb1b6770f39bf35f2',1,'course::examples::phoneapp::Utility']]]
+  ['phone_5fcontacts',['PHONE_CONTACTS',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#a60a240e7bcd23f7fa0b2c9e78d19fffb',1,'course.examples.phoneapp.MainActivity.PHONE_CONTACTS()'],['../classcourse_1_1examples_1_1phoneapp_1_1_ops_activity.html#a6bbe27893d347a4f66c9bac0e2dcc80b',1,'course.examples.phoneapp.OpsActivity.PHONE_CONTACTS()']]],
+  ['phonedetails',['phoneDetails',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#a2e49349c76e07dceda2b968b25b2f12e',1,'course::examples::phoneapp::MainActivity']]],
+  ['phonetypemap',['phoneTypeMap',['../classcourse_1_1examples_1_1phoneapp_1_1_main_activity.html#a2b0ca4e6cb7439dbf892e504baa83c14',1,'course::examples::phoneapp::MainActivity']]]
 ];

@@ -27,15 +27,9 @@ void \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a4483070d81
 \item 
 void \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a427848e2c42eb538b888f8b7214b8cd4}{perform\+Operation} ()
 \item 
-void \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a55825f56d10a878fc5516121f0eda3bf}{set\+Tool\+Tips} ()
+void \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_abb7503626eea4caf6ffba416b13bd788}{complete\+Operation} ()
 \item 
 void \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ae6f21dd987eba779e66e4bb66bbee391}{do\+Dropbox\+Authentication} ()
-\item 
-void \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a329fad70246e569c6746b7a38f35e6e6}{on\+Create\+Context\+Menu} (Context\+Menu menu, View v, Context\+Menu.\+Context\+Menu\+Info menu\+Info)
-\item 
-boolean \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a1c9753b2bbe4cf6d37c17f3a97df304b}{on\+Create\+Options\+Menu} (Menu menu)
-\item 
-boolean \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a6175dfaf6290e9c3a13da40e5ef61e60}{on\+Options\+Item\+Selected} (Menu\+Item item)
 \end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -47,7 +41,7 @@ Dropbox\+A\+P\+I$<$ Android\+Auth\+Session $>$ \hyperlink{classcourse_1_1example
 \item 
 static final String \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a6bbe27893d347a4f66c9bac0e2dcc80b}{P\+H\+O\+N\+E\+\_\+\+C\+O\+N\+T\+A\+C\+T\+S} = \char`\"{}contacts\char`\"{}
 \item 
-static final String \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ac2c7991a146c46106d21d22d1896ec35}{D\+R\+O\+P\+B\+O\+X\+\_\+\+N\+A\+M\+E} = \char`\"{}Drop\+Box-\/Contact\char`\"{}
+static final String \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a00103d05c714f90b383b1a449576484a}{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E} = \char`\"{}Phone\+App.\+Ops\+Activity\char`\"{}
 \end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
@@ -61,46 +55,36 @@ void \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ae68d43a22b
 
 
 \subsection{Detailed Description}
-Created by kannanb on 2/21/2016. 
+Class containing the landing U\+I page of the application ~\newline
+ Created by kannanb on 2/21/2016. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ae6f21dd987eba779e66e4bb66bbee391}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!do\+Dropbox\+Authentication@{do\+Dropbox\+Authentication}}
+\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_abb7503626eea4caf6ffba416b13bd788}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!complete\+Operation@{complete\+Operation}}
+\index{complete\+Operation@{complete\+Operation}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
+\subsubsection[{complete\+Operation()}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Ops\+Activity.\+complete\+Operation (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_abb7503626eea4caf6ffba416b13bd788}
+Method to send a mail notification on the just completed task The method also displays a message on the chosen task operation alongwith any specific information on the task completed \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ae6f21dd987eba779e66e4bb66bbee391}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!do\+Dropbox\+Authentication@{do\+Dropbox\+Authentication}}
 \index{do\+Dropbox\+Authentication@{do\+Dropbox\+Authentication}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
 \subsubsection[{do\+Dropbox\+Authentication()}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Ops\+Activity.\+do\+Dropbox\+Authentication (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
 )}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ae6f21dd987eba779e66e4bb66bbee391}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a124a97ed5678d96f0888b55db9e283bb}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!on\+Create@{on\+Create}}
+Method to perform authentication of user\textquotesingle{}s account on the dropbox. This is done the first time an attempt is made to upload/download information from a dropbox \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a124a97ed5678d96f0888b55db9e283bb}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!on\+Create@{on\+Create}}
 \index{on\+Create@{on\+Create}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
 \subsubsection[{on\+Create(\+Bundle saved\+Instance\+State)}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Ops\+Activity.\+on\+Create (
 \begin{DoxyParamCaption}
 \item[{Bundle}]{saved\+Instance\+State}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [protected]}}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a124a97ed5678d96f0888b55db9e283bb}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a329fad70246e569c6746b7a38f35e6e6}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!on\+Create\+Context\+Menu@{on\+Create\+Context\+Menu}}
-\index{on\+Create\+Context\+Menu@{on\+Create\+Context\+Menu}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
-\subsubsection[{on\+Create\+Context\+Menu(\+Context\+Menu menu, View v, Context\+Menu.\+Context\+Menu\+Info menu\+Info)}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Ops\+Activity.\+on\+Create\+Context\+Menu (
-\begin{DoxyParamCaption}
-\item[{Context\+Menu}]{menu, }
-\item[{View}]{v, }
-\item[{Context\+Menu.\+Context\+Menu\+Info}]{menu\+Info}
-\end{DoxyParamCaption}
-)}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a329fad70246e569c6746b7a38f35e6e6}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a1c9753b2bbe4cf6d37c17f3a97df304b}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!on\+Create\+Options\+Menu@{on\+Create\+Options\+Menu}}
-\index{on\+Create\+Options\+Menu@{on\+Create\+Options\+Menu}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
-\subsubsection[{on\+Create\+Options\+Menu(\+Menu menu)}]{\setlength{\rightskip}{0pt plus 5cm}boolean course.\+examples.\+phoneapp.\+Ops\+Activity.\+on\+Create\+Options\+Menu (
-\begin{DoxyParamCaption}
-\item[{Menu}]{menu}
-\end{DoxyParamCaption}
-)}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a1c9753b2bbe4cf6d37c17f3a97df304b}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a6175dfaf6290e9c3a13da40e5ef61e60}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!on\+Options\+Item\+Selected@{on\+Options\+Item\+Selected}}
-\index{on\+Options\+Item\+Selected@{on\+Options\+Item\+Selected}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
-\subsubsection[{on\+Options\+Item\+Selected(\+Menu\+Item item)}]{\setlength{\rightskip}{0pt plus 5cm}boolean course.\+examples.\+phoneapp.\+Ops\+Activity.\+on\+Options\+Item\+Selected (
-\begin{DoxyParamCaption}
-\item[{Menu\+Item}]{item}
-\end{DoxyParamCaption}
-)}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a6175dfaf6290e9c3a13da40e5ef61e60}
+Initialize U\+I components 
+\begin{DoxyParams}{Parameters}
+{\em saved\+Instance\+State} & \\
+\hline
+\end{DoxyParams}
 \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ae68d43a22b46dd1dea9f23b8f48589aa}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!on\+Pause@{on\+Pause}}
 \index{on\+Pause@{on\+Pause}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
 \subsubsection[{on\+Pause()}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Ops\+Activity.\+on\+Pause (
@@ -108,40 +92,33 @@ Created by kannanb on 2/21/2016.
 {}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [protected]}}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ae68d43a22b46dd1dea9f23b8f48589aa}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_aeb8480322291f8d86c1afd370f4d46e9}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!on\+Resume@{on\+Resume}}
+Pause shake\+Listener when the activity is paused \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_aeb8480322291f8d86c1afd370f4d46e9}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!on\+Resume@{on\+Resume}}
 \index{on\+Resume@{on\+Resume}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
 \subsubsection[{on\+Resume()}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Ops\+Activity.\+on\+Resume (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [protected]}}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_aeb8480322291f8d86c1afd370f4d46e9}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a427848e2c42eb538b888f8b7214b8cd4}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!perform\+Operation@{perform\+Operation}}
+Resume shake\+Listener when the activity is resumed \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a427848e2c42eb538b888f8b7214b8cd4}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!perform\+Operation@{perform\+Operation}}
 \index{perform\+Operation@{perform\+Operation}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
 \subsubsection[{perform\+Operation()}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Ops\+Activity.\+perform\+Operation (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
 )}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a427848e2c42eb538b888f8b7214b8cd4}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a4483070d81483a14c450c03a23521b33}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!retrieve\+Phone\+List@{retrieve\+Phone\+List}}
+Method to perform the task based on the option chosen by the user on the U\+I (upload, download, show contacts) \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a4483070d81483a14c450c03a23521b33}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!retrieve\+Phone\+List@{retrieve\+Phone\+List}}
 \index{retrieve\+Phone\+List@{retrieve\+Phone\+List}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
 \subsubsection[{retrieve\+Phone\+List()}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Ops\+Activity.\+retrieve\+Phone\+List (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
 )}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a4483070d81483a14c450c03a23521b33}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a55825f56d10a878fc5516121f0eda3bf}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!set\+Tool\+Tips@{set\+Tool\+Tips}}
-\index{set\+Tool\+Tips@{set\+Tool\+Tips}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
-\subsubsection[{set\+Tool\+Tips()}]{\setlength{\rightskip}{0pt plus 5cm}void course.\+examples.\+phoneapp.\+Ops\+Activity.\+set\+Tool\+Tips (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a55825f56d10a878fc5516121f0eda3bf}
-
+Method to retrieve phone contact details from the device. Uses \hyperlink{classcourse_1_1examples_1_1phoneapp_1_1_utility}{Utility} A\+P\+I to retreive phone records on a background thread 
 
 \subsection{Member Data Documentation}
-\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ac2c7991a146c46106d21d22d1896ec35}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!D\+R\+O\+P\+B\+O\+X\+\_\+\+N\+A\+M\+E@{D\+R\+O\+P\+B\+O\+X\+\_\+\+N\+A\+M\+E}}
-\index{D\+R\+O\+P\+B\+O\+X\+\_\+\+N\+A\+M\+E@{D\+R\+O\+P\+B\+O\+X\+\_\+\+N\+A\+M\+E}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
-\subsubsection[{D\+R\+O\+P\+B\+O\+X\+\_\+\+N\+A\+M\+E}]{\setlength{\rightskip}{0pt plus 5cm}final String course.\+examples.\+phoneapp.\+Ops\+Activity.\+D\+R\+O\+P\+B\+O\+X\+\_\+\+N\+A\+M\+E = \char`\"{}Drop\+Box-\/Contact\char`\"{}\hspace{0.3cm}{\ttfamily [static]}}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_ac2c7991a146c46106d21d22d1896ec35}
+\hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a00103d05c714f90b383b1a449576484a}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E@{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E}}
+\index{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E@{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
+\subsubsection[{L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E}]{\setlength{\rightskip}{0pt plus 5cm}final String course.\+examples.\+phoneapp.\+Ops\+Activity.\+L\+O\+G\+\_\+\+T\+A\+G\+\_\+\+N\+A\+M\+E = \char`\"{}Phone\+App.\+Ops\+Activity\char`\"{}\hspace{0.3cm}{\ttfamily [static]}}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_a00103d05c714f90b383b1a449576484a}
 \hypertarget{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_afa9dcbfe8d531688656b8ee3042ccba6}{}\index{course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}!m\+D\+B\+Api@{m\+D\+B\+Api}}
 \index{m\+D\+B\+Api@{m\+D\+B\+Api}!course\+::examples\+::phoneapp\+::\+Ops\+Activity@{course\+::examples\+::phoneapp\+::\+Ops\+Activity}}
 \subsubsection[{m\+D\+B\+Api}]{\setlength{\rightskip}{0pt plus 5cm}Dropbox\+A\+P\+I$<$Android\+Auth\+Session$>$ course.\+examples.\+phoneapp.\+Ops\+Activity.\+m\+D\+B\+Api = null}\label{classcourse_1_1examples_1_1phoneapp_1_1_ops_activity_afa9dcbfe8d531688656b8ee3042ccba6}
